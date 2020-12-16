@@ -12,7 +12,7 @@ $(MAIN_PDF): $(BUILD_DIR)/$(SRC_DIR)
 	latexmk -pdfdvi $(PREVIEW_CONTINUOUSLY) -use-make $(MAIN_TEX)
 
 # build/src ディレクトリがないとビルドに失敗する
-$(BUILD_DIR)/$(SRC_DIR):
+$(BUILD_DIR)/$(SRC_DIR): clean
 	mkdir -p $@
 
 .PHONY: watch
