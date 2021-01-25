@@ -38,7 +38,7 @@
   \caption{インスリン打ち忘れ検知の概要とフロー}
   \label{fig:insulin_design}
   \begin{center}
-    % \includegraphics[bb=0 0 1000 530,width=15cm]{assets/}
+    \includegraphics[bb=0 0 1000 530,width=15cm]{assets/insulin_design.png}
   \end{center}
 \end{figure}
 
@@ -109,6 +109,9 @@
 
 この振動データから、
 
-\section{糖尿病患者への通知}
+\section{インスリン打ち忘れの通知}
 
-スピーカーを使った音声通知。
+インスリン忘れの通知にはスピーカーを使用した音声通知を利用する。
+食事検知が行われた時、その食事が検知された時間から直近30分以内にインスリン摂取が確認できなかった場合、これをインスリン打ち忘れとし、通知を行う。
+
+

@@ -1,88 +1,126 @@
 \chapter{評価}
 \label{chap:evaluation}
 
-本章では、本研究で実装したインスリンデバイスと食事検知デバイスのそれぞれの性能を評価する。
-そしてその二つの評価結果について論じた後、二つを合わせてインスリン打ち忘れ通知に関する評価とその結果をもとに考察を述べる。
+本章では、本論文で実装した通知システムの評価を行う。そのために、まずはインスリン摂取検知デバイスと食事検知デバイスを個別に評価する。
+そして、最後に２つを組み合わせて全体の通知システムを評価し、結果を受けて、本提案手法が本論文であげた解決したい問題を解決できるものであるか考察していく。
 
-\section{インスリンデバイス}
-インスリンデバイスの性能について評価をし、考察する。
+\section{インスリン摂取検知デバイス}
+本節では、インスリン注射器に見立てたペンに装着されたインスリン摂取検知デバイスの評価を行う。
 
-\subsection{評価環境}
-インスリンペンデバイスを評価するための実験環境について述べる。
+\subsection{評価方法}
+第\ref{chap:diabetes}章でも述べた通り、糖尿病患者のインスリン治療では、ペン型のインスリン注射器を用いて必要な量のインスリンを服用する。
+そして、本論文の評価では、この動作が再現でき、その動作を以ってインスリン摂取とすれば良い。
+よって、今回はインスリンを実際に摂取するのではなく擬似的に\textbf{ペンを握り、５秒間スイッチを押して静止する}\cite{how_to_inject_insulin_1}\cite{how_to_inject_insulin_2}
+という動作を行うことでインスリン摂取を行ったとみなした。
+今回は、これを１０回試行し、試行間隔は約１０秒で行い、webサーバーを通してその時間が正確に記録されているかどうかを確認した。
+試行間隔は１０秒、そして検知のための静止時間は５秒であるため、検知時間の間隔は約１５秒になっていることが期待される。
 
-\subsection{誤検知率}
-誤検知率がどれくらいになったのかを述べる。
+\subsection{結果}
 
-\begin{figure}[htbp]
-  \caption{インスリン注射器に装着したデバイスの誤検知率}
-  \label{fig:success_failure_rate_insulin}
+テーブル\ref{tb:insulin_detection_time}が、インスリン摂取検知デバイスを使用して上記の動作を１０回試行した結果である。
+\textbf{\textit{injected\_time}}が、インスリン摂取検知デバイスから送られた検知時間であり、\textbf{\textit{created\_at}}がmysqlに保存された時間である。
+この結果から、検知された時間が正確かつ即時的に保存されていることがわかる。
+
+\newpage
+
+\begin{table}[htbp]
+  \caption{インスリン摂取検知デバイスによってリクエストされ、保存されたデータ}
+  \label{tb:insulin_detection_time}
   \begin{center}
-    \includegraphics[bb=0 0 1000 450,width=20cm]{assets/success_failure_rate.png}
+    \begin{tabular}{|c||l|l|}
+      \hline
+      ID & injected\_time & created\_at \\\hline
+      1 & 2021-01-24 00:24:58 & 2021-01-24 00:24:58 \\\hline
+      2 & 2021-01-24 00:25:13 & 2021-01-24 00:25:13 \\\hline
+      3 & 2021-01-24 00:25:28 & 2021-01-24 00:25:28 \\\hline
+      4 & 2021-01-24 00:25:44 & 2021-01-24 00:25:44 \\\hline
+      5 & 2021-01-24 00:25:59 & 2021-01-24 00:25:59 \\\hline
+      6 & 2021-01-24 00:26:13 & 2021-01-24 00:26:13 \\\hline
+      7 & 2021-01-24 00:26:28 & 2021-01-24 00:26:29 \\\hline
+      8 & 2021-01-24 00:26:44 & 2021-01-24 00:26:44 \\\hline
+      9 & 2021-01-24 00:27:00 & 2021-01-24 00:27:00 \\\hline
+      10 & 2021-01-24 00:27:15 & 2021-01-24 00:27:15 \\\hline
+    \end{tabular}
   \end{center}
-\end{figure}
+\end{table}
 
-\subsection{検知時間と実摂取時間の差異}
-検知時間と実際に摂取した時間にどれくらい誤差があるのかを見る。
+\subsection{考察}
 
-\begin{figure}[htbp]
-  \caption{インスリン注射器に装着したデバイスによる検知の時間誤差}
-  \label{fig:insulin_box_n_whisker}
-  \begin{center}
-    \includegraphics[bb=0 0 1000 850,width=20cm]{assets/insulin_box_n_whisker.png}
-  \end{center}
-\end{figure}
+\section{食事検知デバイス}
 
-\section{食事検知}
-食事検知の性能について評価をし、考察する。
+本節では、食事検知デバイスの評価を行う。
 
-今回対象とする、卓上での行動は以下の通りである。
+\subsection{評価手法}
+作成した食事検知デバイスを食卓上に置き、場面別で様々な動作を行い、食事の場面では\textbf{食事として検知}、それ以外の場合は\textbf{食事ではない}と検知することを期待する。
+
+今回評価を行った卓上での行動は以下の通りである。
 
 \begin{enumerate}
-  \item 食事
-  \item 読書
-  \item スマホを触る
+  \item 食事をする
   \item パソコンで作業する
-  \item ゲームする
   \item ものを書く
-  \item お茶を飲む
   \item 机を拭く
-  \item 机そのものを移動する
 \end{enumerate}
 
-\subsection{評価環境}
-食事検知を評価するための実験環境について述べる。
+１の\textbf{食事をする}では、図\ref{}のような１主３菜のメニューを被験者に食べてもらった。図\ref{}が実際の実験の様子である。
+２の\textbf{パソコンで作業する}では、タイピングが机に与える主な振動となるため、寿司打\cite{sushida}を５分間行ってもらった。
+３の\textbf{ものを書く}では、ペンで何かを書く動作、消しゴムで消す動作、消しカスを払う動作、の３つが主な振動源となるためその三つを満たせるよう数学の問題を解く、絵を描くなどを行ってもらった。
+４の\textbf{机を拭く}では、ペーパータオルで机を拭いてもらった。
 
-\subsection{誤検知率}
-誤検知率がどれくらいになったのかを述べる。
+これらの動作の際に起こる振動に対しても食事検知デバイスで正確に食事のみ検知できるかを評価する。
 
-\begin{figure}[htbp]
-  \caption{加速度による食事検知の誤検知率}
-  \label{fig:success_failure_rate_meal}
+\subsection{結果}
+
+本論文の評価では、３人の被験者に協力してもらい、食事の検知実験とその他の動作の検知実験を行った。
+テーブル\ref{tb:meal_detection}が、それぞれの被験者の食事時間と、食事検知デバイスが食事を検知した時間である。
+
+\begin{table}[htbp]
+  \caption{それぞれの被験者の食事時間と食事検知時間}
+  \label{tb:meal_detection_result}
   \begin{center}
-    \includegraphics[bb=0 0 1000 450,width=20cm]{assets/success_failure_rate.png}
+    \begin{tabular}{|c||c|c|}
+      \hline
+      被験者  & 食事時間 & 食事検知時間 \\
+      \hline\hline
+      被験者A &  & \\\hline
+      被験者B &  & \\\hline
+      被験者C &  & \\\hline
+    \end{tabular}
   \end{center}
-\end{figure}
+\end{table}
 
-\subsection{検知時間と実摂取時間の差異}
-検知時間と実際に食事をとった時間にどれくらい誤差があるのかを見る。
+平均で、食事を開始してから○分で検知にいたり、食事をしている間に検知できたことがわかった。
 
-\begin{figure}[htbp]
-  \caption{加速度による食事検知の時間誤差}
-  \label{fig:meal_box_n_whisker}
+テーブル\ref{tb:others_detection_result}が、その他の、パソコンでの作業、ものを書く、机を拭く動作をしてもらった時の食事検知デバイスの検知結果である。
+
+\begin{table}[htbp]
+  \caption{それぞれの被験者の食事時間と食事検知時間}
+  \label{tb:others_detection_result}
   \begin{center}
-    \includegraphics[bb=0 0 1000 850,width=20cm]{assets/meal_box_n_whisker.png}
+    \begin{tabular}{|c||c|c|}
+      \hline
+      被験者  & パソコンでの作業 & 書き物 & 机を拭く \\
+      \hline\hline
+      被験者A & 検知なし & 検知なし & 検知なし \\\hline
+      被験者B & 検知なし & 検知なし & 検知なし \\\hline
+      被験者C & 検知なし & 検知なし & 検知なし \\\hline
+    \end{tabular}
   \end{center}
-\end{figure}
+\end{table}
+
+\sunsection{考察}
+
+食事検知では、実際の食事開始時間と食事を検知できた時間に少々誤差はあったが、食事中にそのイベントを検知することが達成でき、デバイスが正常に動作していることがわかった。
+また、その他の動作に関して、今回対象とした動作自体が限定的ではあったものの、これらの動作に関しては食事検知デバイスは反応せず、その機能の有効性を示したと言える。
 
 \section{インスリン摂取忘れ通知}
-上記２つの評価をもとに、インスリン摂取忘れ通知が達成できるかどうかについて評価し、考察する。
+ここまでで評価した二つのモジュールを使用して、最終的にインスリン摂取を忘れている際に通知が行えるかどうかを評価する。
 
-\subsection{評価環境}
+\subsection{評価手法}
 インスリン摂取忘れ通知の評価をするための実験環境について述べる。
-
 被験者は手元に記録用媒体を準備し、シナリオ別にアラート音声を聞いたかどうか、またどのタイミングで聞いたかを記録する。
 
-\subsection{シナリオ}
+\subsubsection{シナリオ}
 
 本研究では、以下の二つを実験シナリオとして実施した。
 
@@ -99,21 +137,76 @@
   \end{description}
 \end{enumerate}
 
-\begin{figure}[htbp]
-  \caption{シナリオ実験結果（回数）}
-  \label{fig:notify_success_failure}
-  \begin{center}
-    \includegraphics[bb=0 0 1000 400,width=20cm]{assets/notify_success_failure.png}
-  \end{center}
-\end{figure}
+\subsection{結果}
+テーブル\ref{tb:result_scenarios}が、評価結果である。
+期待した通り、シナリオ１では、食事検知が行われたものの、インスリンが食事前に摂取されていたため、通知は行われなかった。
+そしてシナリオ２では、食事検知が行われ、食事前のインスリン摂取が行われていなかったため、期待した通り通知が行われた。
 
-\begin{figure}[htbp]
-  \caption{シナリオ実験結果（百分率）}
-  \label{fig:notify_success_failure_rate}
+\begin{table}[htbp]
+  \caption{シナリオ別結果}
+  \label{tb:result_scenarios}
   \begin{center}
-    \includegraphics[bb=0 0 1000 450,width=20cm]{assets/notify_success_failure_rate.png}
+    \begin{tabular}{|c||c|}
+      \hline
+      シナリオ No.  & 結果 \\
+      \hline\hline
+      1  & 通知なし \\\hline
+      2 & 通知を聞いた \\\hline
+    \end{tabular}
   \end{center}
-\end{figure}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{シナリオ１のインスリン摂取時間}
+  \label{tb:scenario_1_insulin}
+  \begin{center}
+    \begin{tabular}{|c||c|c|}
+      \hline
+      ID  & injected\_time & created\_at \\
+      \hline\hline
+      1 & a & a \\\hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{シナリオ１の食事検知時間}
+  \label{tb:scenario_1_meal}
+  \begin{center}
+    \begin{tabular}{|c||c|}
+      \hline
+      ID  & detected\_time \\
+      \hline\hline
+      1 & a \\\hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{シナリオ２のインスリン摂取時間}
+  \label{tb:scenario_1_insulin}
+  \begin{center}
+    \begin{tabular}{|c||c|c|}
+      \hline
+      ID  & injected\_time & created\_at \\
+      \hline\hline
+      1 & a & a \\\hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{シナリオ２の食事検知時間}
+  \label{tb:scenario_2_meal}
+  \begin{center}
+    \begin{tabular}{|c||c|}
+      \hline
+      ID  & detected\_time \\
+      \hline\hline
+      1 &  a \\\hline
+    \end{tabular}
+  \end{center}
+\end{table}
 
 \subsection{考察}
 

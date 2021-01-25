@@ -97,7 +97,16 @@ ESP32の3.3vの出力を利用し、タクタイルスイッチを通してpin34
   \end{center}
 \end{figure}
 
-図\ref{}が実際の実装物である。小型化し、電池により携帯可能にする段階は本研究の本質ではないため、今回の実装内容としては省いた。
+図\ref{fig:pen_with_switch_n_esp32}が実際の実装物である。
+形状や携帯性に関する配慮を行った設計や実装は本研究の本質ではないため、今回の実装内容としては省いた。
+
+\begin{figure}[htbp]
+  \caption{擬似インスリン注射器として用意したペンに今回の実装物を装着した様子}
+  \label{fig:pen_with_switch_n_esp32}
+  \begin{center}
+    \includegraphics[bb=0 0 1050 740,width=15cm]{assets/pen_with_switch_n_esp32.jpg}
+  \end{center}
+\end{figure}
 
 図\ref{fig:insulin_injection_test}が実装したインスリンデバイスを使った時の電流の変化である。
 横軸を時刻、縦軸をデジタル読み取りの0,1で取った。
@@ -111,7 +120,6 @@ ESP32の3.3vの出力を利用し、タクタイルスイッチを通してpin34
     \includegraphics[bb=0 0 1000 350,width=17cm]{assets/insulin_injection_test.png}
   \end{center}
 \end{figure}
-
 
 本インスリンデバイスは、インスリン摂取を検知すると、HTTPプロトコルのPOSTメソッドを使用して、検知時間をJSONデータとしてWebサーバーにリクエストを行う。
 POSTリクエストを受け取ったサーバーは、受け取ったデータをデコードし、摂取時間のタイムスタンプを取得、MySQLに保存する。
@@ -201,15 +209,16 @@ ADXL345は３軸加速度センサであり、縦、横、高さの３つの値�
 
 \subsection{実装内容}
 
-今回使用したRaspberry Pi 4 Model Bは、３番ピンがSDA(Serial Data), ５番ピンがSCL(Serial Clock)になっており、
+今回使用したRaspberry Pi 4 Model Bは、３番ピンがSDA(Serial Data), ５番ピンがSCL(Serial Clock)に対応しており、
 これらのピンを使用することにより、I2Cプロトコルを利用してセンサーデータを取得することが可能である。
-通常、Raspberry PiのデフォルトではI2C通信は無効化されているため、実装前に有効かする必要がある。
-そして、これら二つのピンを、加速度センサーれADXL345のSDA,SCLピンにそれぞれ接続し、ディジタル・インタフェース電源電圧、電源電圧、そしてグラウンドを接続することで配線が完了する。\cite{adxl345_datasheet}
+通常、Raspberry PiのデフォルトではI2C通信は無効化されているため、実装前に有効化する必要がある。
+そして、これら二つのピンを、加速度センサーれADXL345のSDAとSCLに対応するピンにそれぞれ接続し、ディジタル・インタフェース電源電圧、電源電圧、そしてグラウンドを接続することで配線が完了する。\cite{adxl345_datasheet}
 
-データを読み取り、食事を検知するスクリプトの実装には、様々なボードを使ったハードウェア開発に対応するCircuitPythonを使用した。
+データを読み取り、食事を検知するスクリプトの実装には、様々なボードを使ったハードウェア開発に対応するCircuitPythonを使用した。（ここにadafruit\_blinkaを使っていることを記述する？）
 boardモジュールは、使用されているボードを認識し、使用可能なピンを認識し、それぞれのピンに変数名を割り当てる。これによりSDAとSCLピンを取得し、I2C通信に使用することが可能となる。
 I2C通信の確立には、busioモジュールのI2Cクラスを使用し、データの取得を行うためにadafruit\_adxl34xデバイスドライバを使用した。
 このデバイスドライバのADXL345クラスに、I2Cクラスのインスタンスと、接続されたADXL345のI2Cバスにおけるアドレスを渡すことで、ソフトウェアからセンサーデバイスの値を取得、検知可能となる。
+ソースコード\ref{}が、センサーデータ読み取りをするための簡易的な擬似コードである。
 
 \begin{verbatim}
   import board
@@ -230,7 +239,7 @@ I2C通信の確立には、busioモジュールのI2Cクラスを使用し、デ
   \end{center}
 \end{figure}
 
-図\ref{fig:meal_detector}が、図\ref{fig:meal_detector_wire_illustration}に従って配線した実物である。
+そして、図\ref{fig:meal_detector}が、図\ref{fig:meal_detector_wire_illustration}に従って配線した実物である。
 検知を実施する際には、これを電源につなぎ、動作温度を0度から50度に保つためファンを取り付けた。\cite{raspi_4_heat} \cite{raspi_4_spec}
 
 \begin{figure}[htbp]
@@ -241,10 +250,6 @@ I2C通信の確立には、busioモジュールのI2Cクラスを使用し、デ
   \end{center}
 \end{figure}
 
-加速度センサでどういう値が取れるのかをmatplotlibで可視化したやつそのまま貼って説明。
-
-どんな条件で食事検知とするのかを書く。
-
 \subsection{インスリン打ち忘れ通知}
 
 上記で実装した、二つのデバイスから取得できたデータをもとにインスリンの打ち忘れ検知を行い、打ち忘れが起こった場合には、患者に対して通知を行う。
@@ -252,11 +257,14 @@ I2C通信の確立には、busioモジュールのI2Cクラスを使用し、デ
 患者に知らせる。図\ref{fig:system_flow}が、全体のフローであり、図\ref{fig:raspi_with_speaker}がスピーカーが取り付けられたRaspberry Piである。
 スピーカーは〇〇を使用した。
 
+インスリンの摂取から食事検知、そして患者への通知までの一連の流れを、実装モジュールと共に図\ref{fig:system_flow}にまとめた。
+7の通知は、6の摂取時間を確認、比較した際に30分以上離れていた場合にのみ行われるのが今回の実装である。
+
 \begin{figure}[htbp]
-  \caption{インスリン摂取忘れ通知フロー}
+  \caption{今回実装されたインスリン摂取忘れ通知一連の流れ}
   \label{fig:system_flow}
   \begin{center}
-    \includegraphics[bb=0 0 1000 600,width=15cm]{assets/system_flow.png}
+    \includegraphics[bb=0 0 1000 600,width=15cm]{assets/system_flow_with_modules.png}
   \end{center}
 \end{figure}
 
