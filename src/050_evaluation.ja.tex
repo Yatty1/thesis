@@ -84,14 +84,14 @@
       \hline
       被験者  & 食事時間 & 食事検知時間 \\
       \hline\hline
-      被験者A & 2021-01-24 18:53 - 19:01 & 2021-01-24 18:55:28.264315 \\\hline
-      被験者B & 2021-01-24 19:04 - 19:11 & 2021-01-24 19:04:28.447520 \\\hline
-      被験者C & 2021-01-21 12:46 - 12:58 & 2021-01-21 12:49:10.842095 \\\hline
+      被験者A & 2021-01-24 18:53:35 - 19:01:12 & 2021-01-24 18:55:28.264315 \\\hline
+      被験者B & 2021-01-24 19:04:05 - 19:11:10 & 2021-01-24 19:04:28.447520 \\\hline
+      被験者C & 2021-01-21 12:46:51 - 12:58:30 & 2021-01-21 12:49:10.842095 \\\hline
     \end{tabular}
   \end{center}
 \end{table}
 
-平均で、食事を開始してから約2分で検知に至り、食事をしている間に検知できたことがわかった。
+平均で、食事を開始してから約１分半で検知に至り、食事をしている間に検知できたことがわかった。
 
 テーブル\ref{tb:others_detection_time}が、その他の、パソコンでの作業、ものを書く、机を拭く動作をしてもらった時間であり、
 テーブル\ref{tb:others_detection_result}その食事検知デバイスの検知結果である。
@@ -133,6 +133,7 @@
 
 \section{インスリン摂取忘れ通知}
 ここまでで評価した二つのモジュールを使用して、最終的にインスリン摂取を忘れている際に通知が行えるかどうかを評価する。
+本節では、食事検知デバイスの評価の際に参加してもらった２０代女性に再度協力してもらい、評価を行なった。
 
 \subsection{評価手法}
 インスリン摂取忘れ通知の評価をするための実験環境について述べる。
@@ -183,7 +184,20 @@
       \hline
       ID  & injected\_time & created\_at \\
       \hline\hline
-      1 & a & a \\\hline
+      1 &  &  \\\hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{シナリオ１の食事時間}
+  \label{tb:scenario_2_meal}
+  \begin{center}
+    \begin{tabular}{|c||c|}
+      \hline
+        & 食事時間 \\
+      \hline\hline
+      被験者C & \\\hline
     \end{tabular}
   \end{center}
 \end{table}
@@ -192,37 +206,37 @@
   \caption{シナリオ１の食事検知時間}
   \label{tb:scenario_1_meal}
   \begin{center}
-    \begin{tabular}{|c||c|}
+    \begin{tabular}{|c|}
       \hline
-      ID  & 検知時間 \\
+      検知時間 \\
       \hline\hline
-      1 & a \\\hline
+       \\\hline
     \end{tabular}
   \end{center}
 \end{table}
 
 \begin{table}[htbp]
-  \caption{シナリオ２のインスリン摂取時間}
-  \label{tb:scenario_1_insulin}
+  \caption{シナリオ２の食事時間}
+  \label{tb:scenario_2_meal}
   \begin{center}
-    \begin{tabular}{|c||c|c|}
+    \begin{tabular}{|c||c|}
       \hline
-      ID  & injected\_time & created\_at \\
+        & 食事時間 \\
       \hline\hline
-      1 & a & a \\\hline
+      被験者C & 2021-01-26 20:45:45 - 21:06:12 \\\hline
     \end{tabular}
   \end{center}
 \end{table}
 
 \begin{table}[htbp]
   \caption{シナリオ２の食事検知時間}
-  \label{tb:scenario_2_meal}
+  \label{tb:scenario_2_meal_detect}
   \begin{center}
-    \begin{tabular}{|c||c|}
+    \begin{tabular}{|c|}
       \hline
-      ID  & 検知時間 \\
+      検知時間 \\
       \hline\hline
-      1 &  a \\\hline
+      2021-01-26 20:48:02.713074 \\\hline
     \end{tabular}
   \end{center}
 \end{table}
