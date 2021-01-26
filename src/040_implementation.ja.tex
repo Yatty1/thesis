@@ -32,7 +32,7 @@
       \hline
       開発言語  & C++ \\\hline
       通信機器  & ESP32 devkit v1（図\ref{fig:esp32}） \\\hline
-      注射器を模したもの & マッキーペン （図\ref{fig:insulin_pen}）\\\hline
+      注射器を模したもの & ネームペン （図\ref{fig:insulin_pen}）\\\hline
     \end{tabular}
   \end{center}
 \end{table}
@@ -46,10 +46,10 @@
 \end{figure}
 
 \begin{figure}[htbp]
-  \caption{今回使用したインスリン注射器}
+  \caption{今回使用したインスリン注射器の代用のためのペン}
   \label{fig:insulin_pen}
   \begin{center}
-    \includegraphics[bb=0 0 1300 1200,width=10cm]{assets/insulin_pen_needle.jpg}
+    \includegraphics[bb=0 0 1400 900,width=10cm]{assets/pen.jpg}
   \end{center}
 \end{figure}
 
@@ -74,16 +74,6 @@
 
 インスリン注射器の端のボタンが一定時間以上押された場合に摂取と判定する構造を作るため、今回は物理的なタクタイルスイッチを接着し、このボタンが押された場合にのみ、
 インスリンが摂取されたとして判定するよう実装した。
-
-図\ref{fig:insulin_pen_device_circuit}に、ESP32とそのスイッチ回路を示す。
-
-\begin{figure}[htbp]
-  \caption{インスリン注射器に装着するデバイスの電子回路}
-  \label{fig:insulin_pen_device_circuit}
-  \begin{center}
-    \includegraphics[bb=0 0 1000 300,width=20cm]{assets/insulin_pen_device_circuit.png}
-  \end{center}
-\end{figure}
 
 配線は図\ref{fig:esp32_switch}に示した。実際には、この配線を半田付けした小さい基板をマッキーの端に取り付けてインスリン検知デバイスとして扱う。
 ESP32の3.3vの出力を利用し、タクタイルスイッチを通してpin34につなぎ、プルダウン抵抗は220Ωとした。
@@ -214,20 +204,20 @@ ADXL345は３軸加速度センサであり、縦、横、高さの３つの値�
 通常、Raspberry PiのデフォルトではI2C通信は無効化されているため、実装前に有効化する必要がある。
 そして、これら二つのピンを、加速度センサーれADXL345のSDAとSCLに対応するピンにそれぞれ接続し、ディジタル・インタフェース電源電圧、電源電圧、そしてグラウンドを接続することで配線が完了する。\cite{adxl345_datasheet}
 
-データを読み取り、食事を検知するスクリプトの実装には、様々なボードを使ったハードウェア開発に対応するCircuitPythonを使用した。（ここにadafruit\_blinkaを使っていることを記述する？）
+データを読み取り、食事を検知するスクリプトの実装には、様々なボードを使ったハードウェア開発に対応するCircuitPythonを使用した。
 boardモジュールは、使用されているボードを認識し、使用可能なピンを認識し、それぞれのピンに変数名を割り当てる。これによりSDAとSCLピンを取得し、I2C通信に使用することが可能となる。
 I2C通信の確立には、busioモジュールのI2Cクラスを使用し、データの取得を行うためにadafruit\_adxl34xデバイスドライバを使用した。
 このデバイスドライバのADXL345クラスに、I2Cクラスのインスタンスと、接続されたADXL345のI2Cバスにおけるアドレスを渡すことで、ソフトウェアからセンサーデバイスの値を取得、検知可能となる。
-ソースコード\ref{}が、センサーデータ読み取りをするための簡易的な擬似コードである。
+ソースコード\ref{sensor_code}が、センサーデータ読み取りをするための簡易的な擬似コードである。
 
-\begin{verbatim}
+\begin{lstlisting}[caption=センサーデータを読み取るための疑似コード,label=sensor_code]
   import board
   import busio
   import adafruit_adxl34x
 
   i2c = busio.I2C(board.SCL, board.SDA)
   accelerometer = adafruit_adxl34x.ADXL345(i2c, address=0x1d)
-\end{verbatim}
+\end{lstlisting}
 
 図\ref{fig:meal_detector_wire_illustration}に配線図を示す。
 

@@ -105,9 +105,28 @@
   \item 部屋内で運動中
 \end{enumerate}
 
-図\ref{}がその結果である。
+図\ref{fig:activities_vibration}がノートパソコンでの作業中と部屋内で運動中に机に与えられた振動のデータである。
+そして図\ref{fig:meal_vibration}が食事中に起きる振動のデータである。３つのどれも、ある程度特徴が見られたが、
+食事中は、今回の測定時の平均加速度で約10\si{m/s^{2}}から誤差0.75\si{m/s^{2}}以上、2\si{m/s^{2}}以下の単発の振動が一定周期で起きており、
+食事イベントを判定するには十分な特徴が見て取れた。
 
-この振動データから、
+このデータに加えてさらに、２０代男性３人の協力を得て、合計４人のデータをもとに食事検知のためのアルゴリズムを組んだ。
+
+\begin{figure}[htbp]
+  \caption{それぞれの一連の動作の振動データ}
+  \label{fig:activities_vibration}
+  \begin{center}
+    \includegraphics[bb=0 0 1200 300,width=20cm]{assets/pc_task_n_exercise.png}
+  \end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+  \caption{食事中の振動データ}
+  \label{fig:activities_vibration}
+  \begin{center}
+    \includegraphics[bb=0 0 1200 300,width=20cm]{assets/meal_vibration.png}
+  \end{center}
+\end{figure}
 
 \section{インスリン打ち忘れの通知}
 
