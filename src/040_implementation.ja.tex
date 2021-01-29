@@ -9,7 +9,7 @@
 \section{インスリン摂取検知デバイス}
 \label{section:insulin_pen_device}
 
-本研究におけるインスリン摂取検知デバイスは、患者のインスリン摂取を検知すると、その検知した時間をwebサーバーに対してPOSTリエストし、webサーバーがMySQLに保存するという流れを取っている。
+本研究におけるインスリン摂取検知デバイスは、患者のインスリン摂取を検知すると、その検知した時間をWebサーバーに対してPOSTリエストし、WebサーバーがMySQLに保存するという流れを取っている。
 図\ref{fig:insulin_injection_flow}にこの実装部分の概略と、フローを示す。
 
 \begin{figure}[htbp]
@@ -55,7 +55,7 @@
 
 
 アップロード先のWebサーバーは、食事検知に使用するRaspberry Pi上にホストした。
-使用した言語、フレームワークはテーブル\ref{tb:web_server}の通りである。
+使用した言語、フレームワークは表\ref{tb:web_server}の通りである。
 
 \begin{table}[htbp]
   \caption{Webサーバーのスペック}
@@ -63,7 +63,7 @@
   \begin{center}
     \begin{tabular}{|c||c|}
       \hline
-      開発言語  & python 3.7.3 \\\hline
+      開発言語  & Python 3.7.3 \\\hline
       フレームワーク  & Flask 1.0.2 \\\hline
       DB & MySQL ver 15.1 Distrib 10.3.25-MariaDB \\\hline
     \end{tabular}
@@ -75,8 +75,8 @@
 インスリン注射器の端のボタンが一定時間以上押された場合に摂取と判定する構造を作るため、今回は物理的なタクタイルスイッチを接着し、このボタンが押された場合にのみ、
 インスリンが摂取されたとして判定するよう実装した。
 
-配線は図\ref{fig:esp32_switch}に示した。実際には、この配線を半田付けした小さい基板をマッキーの端に取り付けてインスリン検知デバイスとして扱う。
-ESP32の3.3vの出力を利用し、タクタイルスイッチを通してpin34につなぎ、プルダウン抵抗は220Ωとした。
+配線は図\ref{fig:esp32_switch}に示した。実際には、この配線を半田付けした小さい基板をネームペンの端に取り付けてインスリン検知デバイスとして扱う。
+ESP32の3.3vの出力を利用し、タクタイルスイッチを通してpin34に繋ぎ、プルダウン抵抗は220Ωとした。
 そしてこのスイッチが押されることで通電し、pin34でその電流を読み取る実装である。
 
 \begin{figure}[htbp]
@@ -114,7 +114,7 @@ ESP32の3.3vの出力を利用し、タクタイルスイッチを通してpin34
 本インスリンデバイスは、インスリン摂取を検知すると、HTTPプロトコルのPOSTメソッドを使用して、検知時間をJSONデータとしてWebサーバーにリクエストを行う。
 POSTリクエストを受け取ったサーバーは、受け取ったデータをデコードし、摂取時間のタイムスタンプを取得、MySQLに保存する。
 今回使用したPOSTリクエストのBodyのデータフォーマットは以下である。
-タイムスタンプにはUnix Timestampを採用した。
+タイムスタンプにはUnix time stampを採用した。
 
 \begin{verbatim}
   {
@@ -157,7 +157,7 @@ Webサーバーを経由して保存されたインスリン摂取時間を確�
     \begin{tabular}{|c||c|}
       \hline
       開発言語 & Python 3.7.3 \\\hline
-      使用ライブラリ &  $ time, datetime, busio, board, adafruit_adxl34x $ \\\hline
+      使用ライブラリ &  time, datetime, busio, board, adafruit\_adxl34x \\\hline
     \end{tabular}
   \end{center}
 \end{table}
@@ -170,17 +170,17 @@ Webサーバーを経由して保存されたインスリン摂取時間を確�
   \end{center}
 \end{figure}
 
-ADXL345は３軸加速度センサであり、縦、横、高さの３つの値を取得することができる。今回はこの高さを使って振動を検知した。
+ADXL345は3軸加速度センサーであり、縦、横、高さの3つの値を取得することができる。今回はこの高さを使って振動を検知した。
 
 \begin{figure}[htbp]
-  \caption{Raspberry Pi 4 model b}
+  \caption{Raspberry Pi 4 Model B}
   \label{fig:raspi4_model_b}
   \begin{center}
-    \includegraphics[bb=0 0 1300 1100,width=10cm]{assets/raspi4_model_b.jpg}
+    \includegraphics[bb=0 0 1300 800,width=10cm]{assets/raspi4_model_b.jpg}
   \end{center}
 \end{figure}
 
-テーブル\ref{tb:raspberry_pi_spec}に、本研究で使用したRaspberry Piのスペックを示す。
+表\ref{tb:raspberry_pi_spec}に、本研究で使用したRaspberry Piのスペックを示す。
 
 \begin{table}[htbp]
   \caption{Raspberry Piのスペック}
@@ -199,14 +199,14 @@ ADXL345は３軸加速度センサであり、縦、横、高さの３つの値�
 
 \subsection{実装内容}
 
-今回使用したRaspberry Pi 4 Model Bは、３番ピンがSDA(Serial Data), ５番ピンがSCL(Serial Clock)に対応しており、
+今回使用したRaspberry Pi 4 Model Bは、3番ピンがSDA(Serial Data), 5番ピンがSCL(Serial Clock)に対応しており、
 これらのピンを使用することにより、I2Cプロトコルを利用してセンサーデータを取得することが可能である。
 通常、Raspberry PiのデフォルトではI2C通信は無効化されているため、実装前に有効化する必要がある。
-そして、これら二つのピンを、加速度センサーれADXL345のSDAとSCLに対応するピンにそれぞれ接続し、ディジタル・インタフェース電源電圧、電源電圧、そしてグラウンドを接続することで配線が完了する。\cite{adxl345_datasheet}
+そして、これら2つのピンを、加速度センサーであるADXL345の、SDAとSCLに対応するピンにそれぞれ接続し、デジタル・インタフェース電源電圧、電源電圧、そしてグラウンドを接続することで配線が完了する。\cite{adxl345_datasheet}
 
 データを読み取り、食事を検知するスクリプトの実装には、様々なボードを使ったハードウェア開発に対応するCircuitPythonを使用した。
 boardモジュールは、使用されているボードを認識し、使用可能なピンを認識し、それぞれのピンに変数名を割り当てる。これによりSDAとSCLピンを取得し、I2C通信に使用することが可能となる。
-I2C通信の確立には、busioモジュールのI2Cクラスを使用し、データの取得を行うためにadafruit\_adxl34xデバイスドライバを使用した。
+I2C通信の確立には、busioモジュールのI2Cクラスを使用し、データの取得を行うために、デバイスドライバであるadafruit\_adxl34xを使用した。
 このデバイスドライバのADXL345クラスに、I2Cクラスのインスタンスと、接続されたADXL345のI2Cバスにおけるアドレスを渡すことで、ソフトウェアからセンサーデバイスの値を取得、検知可能となる。
 ソースコード\ref{sensor_code}が、センサーデータ読み取りをするための簡易的な擬似コードである。
 
@@ -230,7 +230,7 @@ I2C通信の確立には、busioモジュールのI2Cクラスを使用し、デ
 \end{figure}
 
 そして、図\ref{fig:meal_detector}が、図\ref{fig:meal_detector_wire_illustration}に従って配線した実物である。
-検知を実施する際には、これを電源につなぎ、動作温度を0度から50度に保つためファンを取り付けた。\cite{raspi_4_heat} \cite{raspi_4_spec}
+検知を実施する際には、これを電源に繋ぎ、動作温度を0度から50度に保つためファンを取り付けた。\cite{raspi_4_heat} \cite{raspi_4_spec}
 
 \begin{figure}[htbp]
   \caption{配線したRaspberry Pi 4とADXL345}
@@ -240,28 +240,28 @@ I2C通信の確立には、busioモジュールのI2Cクラスを使用し、デ
   \end{center}
 \end{figure}
 
-\subsection{インスリン打ち忘れ通知}
+\subsection{インスリン摂取忘れ通知}
 
-上記で実装した、二つのデバイスから取得できたデータをもとにインスリンの打ち忘れ検知を行い、打ち忘れが起こった場合には、患者に対して通知を行う。
+上記で実装した、2つのデバイスから取得できたデータをもとにインスリンの打ち忘れ検知を行い、打ち忘れが起こった場合には、患者に対して通知を行う。
 今回は、食事検知、Webサーバーのホストに使用したRaspberry Piにスピーカーを取り付け、そこから「You forgot your insulin injection」というセリフを流すことで、
 患者に知らせる。図\ref{fig:system_flow}が、全体のフローであり、図\ref{fig:raspi_with_speaker}がスピーカーが取り付けられたRaspberry Piである。
 スピーカーは〇〇を使用した。
 
-インスリンの摂取から食事検知、そして患者への通知までの一連の流れを、実装モジュールと共に図\ref{fig:system_flow}にまとめた。
+インスリンの摂取から食事検知、そして患者への通知まで、一連の流れを実装モジュールと共に図\ref{fig:system_flow}にまとめた。
 7の通知は、6の摂取時間を確認、比較した際に30分以上離れていた場合にのみ行われるのが今回の実装である。
 
 \begin{figure}[htbp]
   \caption{今回実装されたインスリン摂取忘れ通知一連の流れ}
   \label{fig:system_flow}
   \begin{center}
-    \includegraphics[bb=0 0 1000 600,width=15cm]{assets/system_flow_with_modules.png}
+    \includegraphics[bb=0 0 1000 400,width=15cm]{assets/system_flow_with_modules.png}
   \end{center}
 \end{figure}
 
-% \begin{figure}[htbp]
-%   \caption{}
-%   \label{fig:raspi_with_speaker}
-%   \begin{center}
-%     \includegraphics[bb=0 0 1000 600,width=15cm]{assets/raspi_with_speaker.png}
-%   \end{center}
-% \end{figure}
+\begin{figure}[htbp]
+  \caption{音声通知用にスピーカーを付けたRaspberry Pi 4}
+  \label{fig:raspi_with_speaker}
+  \begin{center}
+    \includegraphics[bb=0 0 1400 1100,width=10cm]{assets/raspi_with_speaker.jpg}
+  \end{center}
+\end{figure}
